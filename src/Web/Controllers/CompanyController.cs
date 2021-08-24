@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Logic.DTOs;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Models.Company;
 
 namespace Web.Controllers
@@ -29,6 +31,14 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.LegalForms = new SelectList(new List<LegalFormDTO>
+            {
+                new () { Id = 1, Title = "OOO" },
+                new () { Id = 2, Title = "OAO" }
+            }, "Id", "Title");
+
+            ViewBag.Title = "Добавить";
+            
             return View(new CompanyDTO());
         }
 
@@ -40,16 +50,59 @@ namespace Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    dto = await _service.Create(dto);
-                    return RedirectToAction("Index");
+                    var result = await _service.Create(dto);
+                    if (result)
+                        return RedirectToAction("Index");
                 }
             }
-            catch (Exception /* dex */)
+            catch (Exception)
             {
-                //Log the error (uncomment dex variable name and add a line here to write a log.
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
             return View(dto);
+        }
+
+        [HttpGet("Delete/{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _service.Delete(id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            ViewBag.LegalForms = new SelectList(new List<LegalFormDTO>
+            {
+                new () { Id = 1, Title = "OOO" },
+                new () { Id = 2, Title = "OAO" }
+            }, "Id", "Title");
+
+            ViewBag.Title = "Редактировать";
+
+            var dto = await _service.GetById(id);
+            
+            return View("Create", dto);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(CompanyDTO dto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _service.Update(dto);
+                    if (result)
+                        return RedirectToAction("Index");
+                }
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+            }
+            return View("Create", dto);
         }
     }
 }

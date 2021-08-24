@@ -7,8 +7,9 @@ namespace Logic.Interfaces
     public interface ICompanyService
     {
         Task<List<CompanyDTO>> GetAll();
-        Task<CompanyDTO> Create(CompanyDTO dto);
-        Task<CompanyDTO> Update(CompanyDTO dto);
-        Task Delete(int id);
+        Task<bool> Create(CompanyDTO dto);
+        Task<bool> Update(CompanyDTO dto);
+        Task<bool> Delete(int id);
+        Task<CompanyDTO> GetById(int id);
     }
 }

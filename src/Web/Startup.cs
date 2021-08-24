@@ -8,8 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Data.DatabaseProvider;
+using Data.Interfaces;
+using Data.Repositories;
 using Logic.Interfaces;
 using Logic.Services;
+using Microsoft.Extensions.Options;
 
 namespace Web
 {
@@ -25,6 +29,14 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .Configure<DbSettings>(Configuration.GetSection(nameof(DbSettings)))
+                .AddSingleton<IDbSettings>(sp =>
+                    sp.GetRequiredService<IOptions<DbSettings>>().Value);
+            
+            services.AddScoped<IDatabaseProvider, DatabaseProvider>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<ICompanyService, CompanyService>();
             
