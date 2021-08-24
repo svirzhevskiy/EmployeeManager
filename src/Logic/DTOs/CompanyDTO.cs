@@ -1,10 +1,12 @@
 ﻿using Data.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Logic.DTOs
 {
     public class CompanyDTO
     {
         public int Id { get; set; }
+        [StringLength(maximumLength: 50, MinimumLength = 3, ErrorMessage = "Название может содержать от 3 до 50 символов")]
         public string Title { get; set; } = "";
         public EnumItemDTO LegalForm { get; set; } = new();
 

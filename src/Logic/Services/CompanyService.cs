@@ -22,17 +22,19 @@ namespace Logic.Services
 
         public async Task<IEnumerable<CompanyDTO>> GetAll()
         {
-            var entities = await _repository.GetAll();
-            var legalForms = await _legalFormRepository.GetAll();
+            var entities =  _repository.GetAll();
+            var legalForms =  _legalFormRepository.GetAll();
 
-            return entities.Select(x => new CompanyDTO
+            await Task.WhenAll(entities, legalForms);
+
+            return entities.Result.Select(x => new CompanyDTO
             {
                 Id = x.Id,
                 Title = x.Title,
                 LegalForm = new EnumItemDTO
                 {
                     Id = x.LegalFormId, 
-                    Title = legalForms.First(l => l.Id == x.LegalFormId).Title
+                    Title = legalForms.Result.First(l => l.Id == x.LegalFormId).Title
                 }
             });
         }

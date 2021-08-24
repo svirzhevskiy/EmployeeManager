@@ -4,6 +4,7 @@ using Logic.DTOs;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using Web.Models.Company;
 
 namespace Web.Controllers
@@ -11,10 +12,12 @@ namespace Web.Controllers
     public class CompanyController : Controller
     {
         private readonly ICompanyService _service;
+        private readonly ILogger<CompanyController> _logger;
 
-        public CompanyController(ICompanyService service)
+        public CompanyController(ICompanyService service, ILogger<CompanyController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -33,7 +36,6 @@ namespace Web.Controllers
             var legalForms = await _service.GetLegalForms();
             
             ViewBag.LegalForms = new SelectList(legalForms, "Id", "Title");
-
             ViewBag.Title = "Добавить";
             
             return View(new CompanyDTO());
@@ -52,10 +54,16 @@ namespace Web.Controllers
                         return RedirectToAction("Index");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                _logger.LogError($"{ex.Message}/n{ex.StackTrace}");
+                ModelState.AddModelError("", "Произошла ошибка");
             }
+            var legalForms = await _service.GetLegalForms();
+            
+            ViewBag.LegalForms = new SelectList(legalForms, "Id", "Title");
+            ViewBag.Title = "Добавить";
+            
             return View(dto);
         }
 
@@ -94,10 +102,16 @@ namespace Web.Controllers
                         return RedirectToAction("Index");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                _logger.LogError($"{ex.Message}/n{ex.StackTrace}");
+                ModelState.AddModelError("", "Произошла ошибка");
             }
+            var legalForms = await _service.GetLegalForms();
+            
+            ViewBag.LegalForms = new SelectList(legalForms, "Id", "Title");
+            ViewBag.Title = "Редактировать";
+            
             return View("Create", dto);
         }
     }
