@@ -26,6 +26,12 @@ namespace Web.Controllers
             });
         }
 
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View(new CompanyDTO());
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CompanyDTO dto)
@@ -43,7 +49,7 @@ namespace Web.Controllers
                 //Log the error (uncomment dex variable name and add a line here to write a log.
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
-            return PartialView("_Create", dto);
+            return View(dto);
         }
     }
 }

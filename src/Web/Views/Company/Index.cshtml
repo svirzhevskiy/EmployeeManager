@@ -1,5 +1,4 @@
-﻿@using Logic.DTOs
-@model Web.Models.Company.IndexModel
+﻿@model Web.Models.Company.IndexModel
 
 @{
     ViewBag.Title = "Список компаний";
@@ -7,8 +6,10 @@
 
 <h2>Список компаний</h2>
 
+@Html.ActionLink("Добавить", "Create", "Company")
+
 <table class="table">
-    <thead>
+    <thead class="thead-dark">
     <tr>
         <th scope="col">№</th>
         <th scope="col">Наименование</th>

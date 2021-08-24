@@ -8,7 +8,7 @@ namespace Logic.DTOs
         public string Title { get; set; } = "";
         public LegalFormDTO LegalForm { get; set; } = new LegalFormDTO();
 
-        public CompanyDTO ToDTO(Company entity)
+        public static CompanyDTO ToDTO(Company entity)
         {
             return new CompanyDTO
             {
@@ -18,7 +18,7 @@ namespace Logic.DTOs
             };
         }
 
-        public Company ToEntity(CompanyDTO dto)
+        public static Company ToEntity(CompanyDTO dto)
         {
             return new Company
             {
