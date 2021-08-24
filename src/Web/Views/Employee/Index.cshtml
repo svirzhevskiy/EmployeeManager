@@ -1,0 +1,39 @@
+﻿@model Web.Models.Employee.IndexModel
+
+@{
+    ViewBag.Title = "Список работников";
+}
+
+<h2>Список работников</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">№</th>
+        <th scope="col">Фамилия</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Отчество</th>
+        <th scope="col">Дата приема на работу</th>
+        <th scope="col">Должность</th>
+        <th scope="col">Компания</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Employees)
+    {
+        <tr>
+            <td>@Html.DisplayFor(x => item.Id)</td>
+            <td>@Html.DisplayFor(x => item.Surname)</td>
+            <td>@Html.DisplayFor(x => item.Name)</td>
+            <td>@Html.DisplayFor(x => item.Patronymic)</td>
+            <td>@Html.DisplayFor(x => item.EmploymentDate)</td>
+            <td>@Html.DisplayFor(x => item.Position.Title)</td>
+            <td>@Html.DisplayFor(x => item.Company.Title)</td>
+            <td>редактировать</td>
+            <td>удалить</td>
+        </tr>
+    }
+    </tbody>
+</table>

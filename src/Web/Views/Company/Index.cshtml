@@ -1,0 +1,32 @@
+﻿@using Logic.DTOs
+@model Web.Models.Company.IndexModel
+
+@{
+    ViewBag.Title = "Список компаний";
+}
+
+<h2>Список компаний</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">№</th>
+        <th scope="col">Наименование</th>
+        <th scope="col">Организационно-правовая форма</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Companies)
+    {
+        <tr>
+            <td>@Html.DisplayFor(x => item.Id)</td>
+            <td>@Html.DisplayFor(x => item.Title)</td>
+            <td>@Html.DisplayFor(x => item.LegalForm.Title)</td>
+            <td>редактировать</td>
+            <td>удалить</td>
+        </tr>
+    }
+    </tbody>
+</table>
