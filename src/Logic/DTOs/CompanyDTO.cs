@@ -6,7 +6,7 @@ namespace Logic.DTOs
     {
         public int Id { get; set; }
         public string Title { get; set; } = "";
-        public LegalFormDTO LegalForm { get; set; } = new LegalFormDTO();
+        public EnumItemDTO LegalForm { get; set; } = new();
 
         public static CompanyDTO ToDTO(Company entity)
         {
@@ -14,7 +14,7 @@ namespace Logic.DTOs
             {
                 Id = entity.Id,
                 Title = entity.Title,
-                LegalForm = new LegalFormDTO { Id = entity.LegalFormId }
+                LegalForm = new EnumItemDTO { Id = entity.LegalFormId }
             };
         }
 

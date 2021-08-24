@@ -18,7 +18,7 @@ namespace Data.Repositories
             _table = typeof(T).Name;
         }
 
-        public Task<List<T>> GetAll()
+        public Task<IEnumerable<T>> GetAll()
         {
             return _database.ExecuteQuery<T>($"SELECT * FROM {_table} ORDER BY Id DESC");
         }

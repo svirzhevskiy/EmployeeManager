@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Logic.DTOs;
 using Logic.Interfaces;
@@ -29,13 +28,11 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.LegalForms = new SelectList(new List<LegalFormDTO>
-            {
-                new () { Id = 1, Title = "OOO" },
-                new () { Id = 2, Title = "OAO" }
-            }, "Id", "Title");
+            var legalForms = await _service.GetLegalForms();
+            
+            ViewBag.LegalForms = new SelectList(legalForms, "Id", "Title");
 
             ViewBag.Title = "Добавить";
             
@@ -72,17 +69,16 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
-            ViewBag.LegalForms = new SelectList(new List<LegalFormDTO>
-            {
-                new () { Id = 1, Title = "OOO" },
-                new () { Id = 2, Title = "OAO" }
-            }, "Id", "Title");
-
-            ViewBag.Title = "Редактировать";
-
-            var dto = await _service.GetById(id);
+            var legalForms = _service.GetLegalForms();
             
-            return View("Create", dto);
+            var dto = _service.GetById(id);
+
+            await Task.WhenAll(legalForms, dto);
+            
+            ViewBag.LegalForms = new SelectList(legalForms.Result, "Id", "Title");
+            ViewBag.Title = "Редактировать";
+            
+            return View("Create", dto.Result);
         }
 
         [HttpPost]

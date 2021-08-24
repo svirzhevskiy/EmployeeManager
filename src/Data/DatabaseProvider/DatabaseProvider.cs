@@ -15,7 +15,7 @@ namespace Data.DatabaseProvider
             _connectionString = settings.ConnectionString;
         }
 
-        public async Task<List<T>> ExecuteQuery<T>(string sqlCommand) where T : class, new()
+        public async Task<IEnumerable<T>> ExecuteQuery<T>(string sqlCommand) where T : class, new()
         {
             await using var connection = new SqlConnection(_connectionString);
             try

@@ -5,6 +5,6 @@ namespace Web.Models.Employee
 {
     public class IndexModel
     {
-        public List<EmployeeDTO> Employees { get; init; } = new();
+        public IEnumerable<EmployeeDTO> Employees { get; init; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Data.Entities;
@@ -12,17 +11,30 @@ namespace Logic.Services
     public class CompanyService : ICompanyService
     {
         private readonly IBaseRepository<Company> _repository;
+        private readonly IBaseRepository<LegalForm> _legalFormRepository;
 
-        public CompanyService(IBaseRepository<Company> repository)
+        public CompanyService(IBaseRepository<Company> repository, 
+            IBaseRepository<LegalForm> legalFormRepository)
         {
             _repository = repository;
+            _legalFormRepository = legalFormRepository;
         }
 
-        public async Task<List<CompanyDTO>> GetAll()
+        public async Task<IEnumerable<CompanyDTO>> GetAll()
         {
             var entities = await _repository.GetAll();
+            var legalForms = await _legalFormRepository.GetAll();
 
-            return entities.Select(CompanyDTO.ToDTO).ToList();
+            return entities.Select(x => new CompanyDTO
+            {
+                Id = x.Id,
+                Title = x.Title,
+                LegalForm = new EnumItemDTO
+                {
+                    Id = x.LegalFormId, 
+                    Title = legalForms.First(l => l.Id == x.LegalFormId).Title
+                }
+            });
         }
 
         public Task<bool> Create(CompanyDTO dto)
@@ -45,6 +57,13 @@ namespace Logic.Services
             var entity = await _repository.GetById(id);
 
             return CompanyDTO.ToDTO(entity);
+        }
+
+        public async Task<IEnumerable<EnumItemDTO>> GetLegalForms()
+        {
+            var entities = await _legalFormRepository.GetAll();
+
+            return entities.Select(x => new EnumItemDTO { Id = x.Id, Title = x.Title });
         }
     }
 }

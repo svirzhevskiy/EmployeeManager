@@ -36,7 +36,7 @@ namespace Web
             
             services.AddScoped<IDatabaseProvider, DatabaseProvider>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            
+
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<ICompanyService, CompanyService>();
             

@@ -10,8 +10,8 @@ namespace Logic.DTOs
         public string Name { get; set; } = "";
         public string Patronymic { get; set; } = "";
         public DateTime EmploymentDate { get; set; }
-        public PositionDTO Position { get; set; } = new PositionDTO();
-        public CompanyDTO Company { get; set; } = new CompanyDTO();
+        public EnumItemDTO Position { get; set; } = new ();
+        public CompanyDTO Company { get; set; } = new ();
 
         public EmployeeDTO ToDTO(Employee entity)
         {
@@ -23,7 +23,7 @@ namespace Logic.DTOs
                 Patronymic = entity.Patronymic,
                 EmploymentDate = entity.EmploymentDate,
                 Company = new CompanyDTO { Id = entity.CompanyId },
-                Position = new PositionDTO { Id = entity.PositionId }
+                Position = new EnumItemDTO { Id = entity.PositionId }
             };
         }
         

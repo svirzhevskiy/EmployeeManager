@@ -10,39 +10,7 @@ namespace Logic.Services
     {
         public async Task<List<EmployeeDTO>> GetAll()
         {
-            return new List<EmployeeDTO>()
-            {
-                new ()
-                {
-                    Id = 1, Name = "Larry", Surname = "qwe", Company = new CompanyDTO() {Id = 1, Title = "Quilix"},
-                    EmploymentDate = new DateTime(2019, 01, 10), Patronymic = "asd", 
-                    Position =new PositionDTO(){ Id = 1, Title = "qwe"} 
-                },
-                new ()
-                {
-                    Id = 2, Name = "Larry", Surname = "qwe", Company = new CompanyDTO() {Id = 1, Title = "Quilix"},
-                    EmploymentDate = new DateTime(2019, 01, 10), Patronymic = "asd", 
-                    Position =new PositionDTO(){ Id = 1, Title = "qwe"} 
-                },
-                new ()
-                {
-                    Id = 3, Name = "Larry", Surname = "qwe", Company = new CompanyDTO() {Id = 1, Title = "Quilix"},
-                    EmploymentDate = new DateTime(2019, 01, 10), Patronymic = "asd", 
-                    Position =new PositionDTO(){ Id = 1, Title = "qwe"} 
-                },
-                new ()
-                {
-                    Id = 4, Name = "Larry", Surname = "qwe", Company = new CompanyDTO() {Id = 1, Title = "Quilix"},
-                    EmploymentDate = new DateTime(2019, 01, 10), Patronymic = "asd", 
-                    Position =new PositionDTO(){ Id = 1, Title = "qwe"} 
-                },
-                new ()
-                {
-                    Id = 5, Name = "Larry", Surname = "qwe", Company = new CompanyDTO() {Id = 1, Title = "Quilix"},
-                    EmploymentDate = new DateTime(2019, 01, 10), Patronymic = "asd", 
-                    Position =new PositionDTO(){ Id = 1, Title = "qwe"} 
-                },
-            };
+            throw new Exception();
         }
 
         public async Task<EmployeeDTO> Create(EmployeeDTO dto)

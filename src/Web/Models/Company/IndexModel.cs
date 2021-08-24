@@ -5,6 +5,6 @@ namespace Web.Models.Company
 {
     public class IndexModel
     {
-        public List<CompanyDTO> Companies { get; set; }
+        public IEnumerable<CompanyDTO> Companies { get; init; }
     }
 }
