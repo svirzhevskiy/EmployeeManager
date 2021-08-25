@@ -36,7 +36,13 @@
         <div class="form-group">
             @Html.LabelFor(x => x.EmploymentDate, "Дата приема на работу", new { @class = "control-label col-md-2"})
             <div class="col-md-10">
-                <input type="date" />
+                <input class="form-control text-box single-line" 
+                       data-val="true" 
+                       id="EmploymentDate" 
+                       name="EmploymentDate" 
+                       type="date" 
+                       value="@Model.EmploymentDate.ToString("yyyy-MM-dd")"/>
+                @Html.ValidationMessageFor(x => x.EmploymentDate, "", new { @class = "text-danger" })
             </div>
         </div>
         

@@ -9,7 +9,7 @@ namespace Logic.DTOs
         public string Surname { get; set; } = "";
         public string Name { get; set; } = "";
         public string Patronymic { get; set; } = "";
-        public DateTime EmploymentDate { get; set; }
+        public DateTime EmploymentDate { get; set; } = DateTime.Now;
         public EnumItemDTO Position { get; set; } = new ();
         public EnumItemDTO Company { get; set; } = new ();
 

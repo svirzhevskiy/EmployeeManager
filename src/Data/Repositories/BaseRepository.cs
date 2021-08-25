@@ -44,7 +44,15 @@ namespace Data.Repositories
                         valuesBuilder.Append('N');
                     }
                     valuesBuilder.Append("'");
-                    valuesBuilder.Append(props[i].GetValue(entity));
+                    if (props[i].PropertyType == typeof(DateTime))
+                    {
+                        var date = Convert.ToDateTime(props[i].GetValue(entity)).ToString("yyyy-MM-dd");
+                        valuesBuilder.Append(date);
+                    }
+                    else
+                    {
+                        valuesBuilder.Append(props[i].GetValue(entity));
+                    }
                     valuesBuilder.Append("'");
                 }
                 else
@@ -86,7 +94,15 @@ namespace Data.Repositories
                         updateCommand.Append('N');
                     }
                     updateCommand.Append("'");
-                    updateCommand.Append(props[i].GetValue(entity));
+                    if (props[i].PropertyType == typeof(DateTime))
+                    {
+                        var date = Convert.ToDateTime(props[i].GetValue(entity)).ToString("yyyy-MM-dd");
+                        updateCommand.Append(date);
+                    }
+                    else
+                    {
+                        updateCommand.Append(props[i].GetValue(entity));
+                    }
                     updateCommand.Append("'");
                 }
                 else
