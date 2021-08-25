@@ -16,7 +16,13 @@ namespace Data
             _connectionString = settings.ConnectionString;
             _commands = new List<string>();
         }
-        
+
+        public DbContext(List<string> commands, string connectionString)
+        {
+            _commands = commands;
+            _connectionString = connectionString;
+        }
+
         public void AddCommand(string sqlCommand)
         {
             _commands.Add(sqlCommand);
@@ -76,6 +82,29 @@ namespace Data
                 }
 
                 return result;
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+        }
+
+        public async Task<object[]> ExecuteQuery(string query)
+        {
+            await using var connection = new SqlConnection(_connectionString);
+            try
+            {
+                await connection.OpenAsync();
+                    
+                await using var sqlCommand = new SqlCommand(query, connection);
+                await using var reader = await sqlCommand.ExecuteReaderAsync();
+
+                await reader.ReadAsync();
+
+                object[] values = new object[reader.FieldCount];
+                reader.GetValues(values);
+                
+                return values;
             }
             finally
             {

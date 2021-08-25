@@ -10,7 +10,7 @@ namespace Data
         private readonly IDbContext _context;
         public IBaseRepository<Company> Companies { get; }
         public IBaseRepository<Position> Positions { get; }
-        public IBaseRepository<Employee> Employees { get; }
+        public IEmployeeRepository Employees { get; }
         public IBaseRepository<LegalForm> LegalForms { get; }
 
         public UnitOfWork(IDbContext context)
@@ -18,7 +18,7 @@ namespace Data
             _context = context;
             Companies = new BaseRepository<Company>(_context);
             Positions = new BaseRepository<Position>(_context);
-            Employees = new BaseRepository<Employee>(_context);
+            Employees = new EmployeeRepository(context);
             LegalForms = new BaseRepository<LegalForm>(_context);
         }
 

@@ -8,5 +8,6 @@ namespace Data.Interfaces
         void AddCommand(string sqlCommand);
         Task<bool> SaveChanges();
         Task<IEnumerable<T>> ExecuteQuery<T>(string query) where T : class, new();
+        Task<object[]> ExecuteQuery(string query);
     }
 }

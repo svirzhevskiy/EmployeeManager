@@ -8,7 +8,7 @@ namespace Data.Interfaces
         Task<bool> Commit();
         IBaseRepository<Company> Companies { get; }
         IBaseRepository<Position> Positions { get; }
-        IBaseRepository<Employee> Employees { get; }
+        IEmployeeRepository Employees { get; }
         IBaseRepository<LegalForm> LegalForms { get; }
     }
 }
