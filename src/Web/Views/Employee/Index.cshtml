@@ -6,7 +6,7 @@
 
 <h2>Список работников</h2>
 
-@Html.ActionLink("Добавить", "Create", "Company", null, new { @class = "btn btn-primary"})
+@Html.ActionLink("Добавить", "Create", "Employee", null, new { @class = "btn btn-primary"})
 
 <table class="table" style="margin-top: 1rem;">
     <thead class="thead-dark">
@@ -34,11 +34,11 @@
             <td>@Html.DisplayFor(x => item.Position.Title)</td>
             <td>@Html.DisplayFor(x => item.Company.Title)</td>
             <td>
-                @Html.ActionLink("Редактировать", "Update", "Company",
+                @Html.ActionLink("Редактировать", "Update", "Employee",
                     new {id = item.Id}, new { @class = "btn btn-light"})
             </td>
             <td>
-                @Html.ActionLink("Удалить", "Delete", "Company", 
+                @Html.ActionLink("Удалить", "Delete", "Employee", 
                     new {id = item.Id}, new { @class = "btn btn-dark"})
             </td>
         </tr>

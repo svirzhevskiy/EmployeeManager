@@ -12,5 +12,6 @@ namespace Logic.Interfaces
         Task<bool> Delete(int id);
         Task<EmployeeDTO> GetById(int id);
         Task<IEnumerable<EnumItemDTO>> GetPositions();
+        Task<IEnumerable<EnumItemDTO>> GetCompanies();
     }
 }

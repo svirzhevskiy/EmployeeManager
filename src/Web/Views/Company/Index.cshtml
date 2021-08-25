@@ -8,6 +8,8 @@
 
 @Html.ActionLink("Добавить", "Create", "Company", null, new { @class = "btn btn-primary"})
 
+@Html.ValidationSummary(true, "Произошла ошибка", new { @class = "text-danger" })
+
 <table class="table" style="margin-top: 1rem;">
     <thead class="thead-dark">
     <tr>

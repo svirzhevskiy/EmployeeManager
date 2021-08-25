@@ -67,11 +67,24 @@ namespace Web.Controllers
             return View(dto);
         }
 
-        [HttpGet("Delete/{id:int}")]
+        [Route("Company/Delete/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.Delete(id);
-            return RedirectToAction("Index");
+
+            if (result)
+            {
+                return RedirectToAction("Index");
+            }
+            
+            ModelState.AddModelError("", "Произошла ошибка");
+            
+            var companies = await _service.GetAll();
+            
+            return View("Index", new IndexModel
+            {
+                Companies = companies
+            });
         }
 
         [HttpGet]

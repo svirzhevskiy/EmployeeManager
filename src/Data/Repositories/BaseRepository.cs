@@ -38,6 +38,10 @@ namespace Data.Repositories
 
                 if (props[i].PropertyType != typeof(int))
                 {
+                    if (props[i].PropertyType == typeof(string))
+                    {
+                        valuesBuilder.Append('N');
+                    }
                     valuesBuilder.Append("'");
                     valuesBuilder.Append(props[i].GetValue(entity));
                     valuesBuilder.Append("'");
@@ -76,6 +80,10 @@ namespace Data.Repositories
 
                 if (props[i].PropertyType != typeof(int))
                 {
+                    if (props[i].PropertyType == typeof(string))
+                    {
+                        updateCommand.Append('N');
+                    }
                     updateCommand.Append("'");
                     updateCommand.Append(props[i].GetValue(entity));
                     updateCommand.Append("'");

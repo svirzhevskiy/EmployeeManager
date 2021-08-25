@@ -32,7 +32,7 @@ namespace Logic.Services
                 Name = x.Name,
                 Patronymic = x.Patronymic,
                 EmploymentDate = x.EmploymentDate,
-                Company = new CompanyDTO
+                Company = new EnumItemDTO()
                 {
                     Id = x.CompanyId,
                     Title = companies.Result.First(c => c.Id == x.CompanyId).Title
@@ -76,6 +76,13 @@ namespace Logic.Services
         public async Task<IEnumerable<EnumItemDTO>> GetPositions()
         {
             var entities = await _unitOfWork.Positions.GetAll();
+
+            return entities.Select(x => new EnumItemDTO { Id = x.Id, Title = x.Title });
+        }
+
+        public async Task<IEnumerable<EnumItemDTO>> GetCompanies()
+        {
+            var entities = await _unitOfWork.Companies.GetAll();
 
             return entities.Select(x => new EnumItemDTO { Id = x.Id, Title = x.Title });
         }
