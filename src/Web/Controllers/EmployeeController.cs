@@ -24,10 +24,10 @@ namespace Web.Controllers
             _service = service;
         }
         
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string filter = "")
         {
-            var employees = _service.GetAll(page, ItemsPerPage);
-            var total = _service.CountEmployees();
+            var employees = _service.GetAll(page, ItemsPerPage, filter);
+            var total = _service.CountEmployees(filter);
 
             await Task.WhenAll(employees, total);
             
@@ -36,7 +36,8 @@ namespace Web.Controllers
                 Employees = employees.Result,
                 ItemsPerPage = ItemsPerPage,
                 PageNumber = page,
-                TotalItems = total.Result
+                TotalItems = total.Result,
+                Filter = filter
             });
         }
         

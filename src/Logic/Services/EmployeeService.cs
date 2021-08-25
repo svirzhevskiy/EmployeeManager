@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Data.Entities;
 using Data.Interfaces;
 using Logic.DTOs;
 using Logic.Interfaces;
@@ -32,11 +33,12 @@ namespace Logic.Services
             ));
         }
         
-        public async Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage)
+        public async Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage, string filter)
         {
             var skip = (page - 1) * itemsPerPage;
+
+            var employees = _unitOfWork.Employees.GetSortedPage(skip, itemsPerPage, filter);
             
-            var employees =  _unitOfWork.Employees.GetPage(skip < 0 ? 0 : skip, itemsPerPage);
             var positions =  _unitOfWork.Positions.GetAll();
             var companies = _unitOfWork.Companies.GetAll(); 
 
@@ -49,9 +51,9 @@ namespace Logic.Services
                 ));
         }
 
-        public Task<int> CountEmployees()
+        public Task<int> CountEmployees(string filter = "")
         {
-            return _unitOfWork.Employees.Count();
+            return _unitOfWork.Employees.Count(filter);
         }
 
         public Task<bool> Create(EmployeeDTO dto)

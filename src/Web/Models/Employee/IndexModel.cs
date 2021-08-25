@@ -11,5 +11,6 @@ namespace Web.Models.Employee
         public int ItemsPerPage { get; set; }
         public int TotalItems { get; set; }
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);
+        public string Filter { get; set; }
     }
 }

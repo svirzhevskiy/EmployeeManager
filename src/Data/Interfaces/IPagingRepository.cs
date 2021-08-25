@@ -8,14 +8,16 @@ namespace Data.Interfaces
         /// <summary>
         /// Get total number of employees. Employees with flag IsDeleted will ignored 
         /// </summary>
+        /// /// <param name="filter">Filter</param>
         /// <returns>Number of employees</returns>
-        Task<int> Count();
+        Task<int> Count(string filter);
         /// <summary>
-        /// Fetch specified number of employees with specified offset
+        /// Fetch specified number of employees with specified offset matching specified filter
         /// </summary>
         /// <param name="skip">Offset</param>
         /// <param name="take">Fetch</param>
+        /// <param name="filter">Filter</param>
         /// <returns>Collection of employees</returns>
-        Task<IEnumerable<T>> GetPage(int skip, int take);
+        Task<IEnumerable<T>> GetSortedPage(int skip, int take, string filter);
     }
 }

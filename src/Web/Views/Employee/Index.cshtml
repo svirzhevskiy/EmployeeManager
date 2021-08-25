@@ -6,6 +6,15 @@
 
 <h2>Список работников</h2>
 
+@using (Html.BeginForm("Index", "Employee", FormMethod.Get))
+{
+    @Html.HiddenFor(x => x.PageNumber, "Page")
+    <p>
+        Поиск по имени: @Html.TextBox("Filter")
+        <input type="submit" value="Поиск"/>
+    </p>
+}
+
 <table class="table" style="margin-top: 1rem;">
     <thead class="thead-dark">
     <tr>
@@ -48,7 +57,7 @@
     @for (var i = 1; i <= Model.TotalPages; i++)
     {
         var cssClass = i == Model.PageNumber ? "selected btn-primary" : "btn-light";
-        @Html.ActionLink(i.ToString(), "Index", "Employee", new { page = i }, new { @class = $"btn {cssClass}"})
+        @Html.ActionLink(i.ToString(), "Index", "Employee", new { page = i, filter = Model.Filter }, new { @class = $"btn {cssClass}"})
     }
 </div>
 @Html.ActionLink("Добавить", "Create", "Employee", null, new { @class = "btn btn-primary float-right"})

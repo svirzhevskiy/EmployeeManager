@@ -16,8 +16,9 @@ namespace Logic.Interfaces
         /// </summary>
         /// <param name="page">Page number</param>
         /// <param name="itemsPerPage">Number of employees on page</param>
+        /// <param name="filter">Filter</param>
         /// <returns>Collection of employees</returns>
-        Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage);
+        Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage, string filter);
         /// <summary>
         /// Create new employee
         /// </summary>
@@ -55,7 +56,8 @@ namespace Logic.Interfaces
         /// <summary>
         /// Get total number of employees
         /// </summary>
+        /// <param name="filter">Filter</param>
         /// <returns>Number of employees</returns>
-        Task<int> CountEmployees();
+        Task<int> CountEmployees(string filter);
     }
 }

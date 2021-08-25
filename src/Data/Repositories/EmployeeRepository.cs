@@ -17,18 +17,18 @@ namespace Data.Repositories
             _table = nameof(Employee);
         }
         
-        public async Task<int> Count()
+        public async Task<int> Count(string filter)
         {
             var result = await _context.ExecuteQuery(
-                $"SELECT COUNT(*) FROM {_table} WHERE IsDeleted=0 or IsDeleted IS NULL");
+                $"SELECT COUNT(*) FROM {_table} WHERE (IsDeleted=0 or IsDeleted IS NULL) AND (Surname LIKE '%{filter}%' OR Name LIKE '%{filter}%' OR Patronymic LIKE '%{filter}%')");
 
             return Convert.ToInt32(result[0]);
         }
 
-        public Task<IEnumerable<Employee>> GetPage(int skip, int take)
+        public Task<IEnumerable<Employee>> GetSortedPage(int skip, int take, string filter)
         {
             return _context.ExecuteQuery<Employee>(
-                $"SELECT * FROM {_table} WHERE IsDeleted=0 or IsDeleted IS NULL ORDER BY Id OFFSET {skip} ROWS FETCH NEXT {take} ROWS ONLY");
+                $"SELECT * FROM {_table} WHERE (IsDeleted=0 or IsDeleted IS NULL) AND (Surname LIKE '%{filter}%' OR Name LIKE '%{filter}%' OR Patronymic LIKE '%{filter}%') ORDER BY Id OFFSET {skip} ROWS FETCH NEXT {take} ROWS ONLY");
         }
     }
 }
