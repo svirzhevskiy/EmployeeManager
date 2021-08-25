@@ -26,6 +26,28 @@ namespace Logic.DTOs
                 Position = new EnumItemDTO { Id = entity.PositionId }
             };
         }
+
+        public static EmployeeDTO ToDTO(Employee employee, Position position, Company company)
+        {
+            return new EmployeeDTO
+            {
+                Id = employee.Id,
+                Surname = employee.Surname,
+                Name = employee.Name,
+                Patronymic = employee.Patronymic,
+                EmploymentDate = employee.EmploymentDate,
+                Company = new EnumItemDTO
+                {
+                    Id = employee.CompanyId,
+                    Title = company.Title
+                },
+                Position = new EnumItemDTO
+                {
+                    Id = employee.PositionId,
+                    Title = position.Title
+                }
+            };
+        }
         
         public static Employee ToEntity(EmployeeDTO dto)
         {

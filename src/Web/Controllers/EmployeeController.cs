@@ -16,19 +16,27 @@ namespace Web.Controllers
         private readonly ILogger<EmployeeController> _logger;
         private readonly IEmployeeService _service;
 
+        private const int ItemsPerPage = 5;
+
         public EmployeeController(ILogger<EmployeeController> logger, IEmployeeService service)
         {
             _logger = logger;
             _service = service;
         }
         
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var employees = await _service.GetAll();
+            var employees = _service.GetAll(page, ItemsPerPage);
+            var total = _service.CountEmployees();
+
+            await Task.WhenAll(employees, total);
             
             return View(new IndexModel
             {
-                Employees = employees
+                Employees = employees.Result,
+                ItemsPerPage = ItemsPerPage,
+                PageNumber = page,
+                TotalItems = total.Result
             });
         }
         

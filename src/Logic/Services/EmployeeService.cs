@@ -25,45 +25,54 @@ namespace Logic.Services
 
             await Task.WhenAll(employees, positions, companies);
 
-            return employees.Result.Select(x => new EmployeeDTO
-            {
-                Id = x.Id,
-                Surname = x.Surname,
-                Name = x.Name,
-                Patronymic = x.Patronymic,
-                EmploymentDate = x.EmploymentDate,
-                Company = new EnumItemDTO()
-                {
-                    Id = x.CompanyId,
-                    Title = companies.Result.First(c => c.Id == x.CompanyId).Title
-                },
-                Position = new EnumItemDTO
-                {
-                    Id = x.PositionId,
-                    Title = positions.Result.First(p => p.Id == x.PositionId).Title
-                }
-            });
+            return employees.Result.Select(x => EmployeeDTO.ToDTO(
+                x,
+                positions.Result.First(p => p.Id == x.PositionId),
+                companies.Result.First(c => c.Id == x.CompanyId)
+            ));
+        }
+        
+        public async Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage)
+        {
+            var skip = (page - 1) * itemsPerPage;
+            
+            var employees =  _unitOfWork.Employees.GetPage(skip < 0 ? 0 : skip, itemsPerPage);
+            var positions =  _unitOfWork.Positions.GetAll();
+            var companies = _unitOfWork.Companies.GetAll(); 
+
+            await Task.WhenAll(employees, positions, companies);
+
+            return employees.Result.Select(x => EmployeeDTO.ToDTO(
+                x,
+                positions.Result.First(p => p.Id == x.PositionId),
+                companies.Result.First(c => c.Id == x.CompanyId)
+                ));
         }
 
-        public async Task<bool> Create(EmployeeDTO dto)
+        public Task<int> CountEmployees()
+        {
+            return _unitOfWork.Employees.Count();
+        }
+
+        public Task<bool> Create(EmployeeDTO dto)
         {
             _unitOfWork.Employees.Create(EmployeeDTO.ToEntity(dto));
 
-            return await _unitOfWork.Commit();
+            return _unitOfWork.Commit();
         }
 
-        public async Task<bool> Update(EmployeeDTO dto)
+        public Task<bool> Update(EmployeeDTO dto)
         {
             _unitOfWork.Employees.Update(EmployeeDTO.ToEntity(dto));
 
-            return await _unitOfWork.Commit();
+            return _unitOfWork.Commit();
         }
 
-        public async Task<bool> Delete(int id)
+        public Task<bool> Delete(int id)
         {
             _unitOfWork.Employees.Delete(id);
 
-            return await _unitOfWork.Commit();
+            return _unitOfWork.Commit();
         }
 
         public async Task<EmployeeDTO> GetById(int id)
