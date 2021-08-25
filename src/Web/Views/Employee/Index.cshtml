@@ -45,3 +45,11 @@
     }
     </tbody>
 </table>
+
+<div class="btn-group">
+    @for (var i = 1; i <= Model.TotalPages; i++)
+    {
+        var cssClass = i == Model.PageNumber ? "selected btn-primary" : "btn-light";
+        @Html.ActionLink(i.ToString(), "Index", "Employee", new { page = i }, new { @class = $"btn {cssClass}"})
+    }
+</div>
