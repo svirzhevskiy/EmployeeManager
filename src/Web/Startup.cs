@@ -52,7 +52,7 @@ namespace Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Employee/Error");
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
