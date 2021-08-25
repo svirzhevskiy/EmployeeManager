@@ -13,7 +13,7 @@ namespace Logic.DTOs
         public EnumItemDTO Position { get; set; } = new ();
         public CompanyDTO Company { get; set; } = new ();
 
-        public EmployeeDTO ToDTO(Employee entity)
+        public static EmployeeDTO ToDTO(Employee entity)
         {
             return new EmployeeDTO
             {
@@ -27,7 +27,7 @@ namespace Logic.DTOs
             };
         }
         
-        public Employee ToEntity(EmployeeDTO dto)
+        public static Employee ToEntity(EmployeeDTO dto)
         {
             return new Employee
             {

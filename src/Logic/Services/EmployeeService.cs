@@ -45,29 +45,39 @@ namespace Logic.Services
             });
         }
 
-        public async Task<EmployeeDTO> Create(EmployeeDTO dto)
+        public async Task<bool> Create(EmployeeDTO dto)
         {
-            throw new System.NotImplementedException();
+            _unitOfWork.Employees.Create(EmployeeDTO.ToEntity(dto));
+
+            return await _unitOfWork.Commit();
         }
 
-        public async Task<EmployeeDTO> Update(EmployeeDTO dto)
+        public async Task<bool> Update(EmployeeDTO dto)
         {
-            throw new System.NotImplementedException();
+            _unitOfWork.Employees.Update(EmployeeDTO.ToEntity(dto));
+
+            return await _unitOfWork.Commit();
         }
 
-        public async Task Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            throw new System.NotImplementedException();
+            _unitOfWork.Employees.Delete(id);
+
+            return await _unitOfWork.Commit();
         }
 
         public async Task<EmployeeDTO> GetById(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _unitOfWork.Employees.GetById(id);
+
+            return EmployeeDTO.ToDTO(entity);
         }
 
         public async Task<IEnumerable<EnumItemDTO>> GetPositions()
         {
-            throw new NotImplementedException();
+            var entities = await _unitOfWork.Positions.GetAll();
+
+            return entities.Select(x => new EnumItemDTO { Id = x.Id, Title = x.Title });
         }
     }
 }
