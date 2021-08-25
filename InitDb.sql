@@ -1,10 +1,13 @@
 create database "EmployeeManagementDB";
 
+GO
+
 use "EmployeeManagementDB";
 
 create table LegalForm (
 	Id INT IDENTITY(1, 1),
-	Title NVARCHAR(50)
+	Title NVARCHAR(50),
+	IsDeleted BIT
 );
 insert into LegalForm (Title) values (N'ООО');
 insert into LegalForm (Title) values (N'ОАО');
@@ -12,7 +15,8 @@ insert into LegalForm (Title) values (N'ЗАО');
 
 create table Position (
 	Id INT IDENTITY(1, 1),
-	Title NVARCHAR(50)
+	Title NVARCHAR(50),
+	IsDeleted BIT
 );
 insert into Position (Title) values (N'Разработчик');
 insert into Position (Title) values (N'Тестировщик');
@@ -22,7 +26,8 @@ insert into Position (Title) values (N'Менеджер');
 create table Company (
 	Id INT IDENTITY(1, 1),
 	Title NVARCHAR(50),
-	LegalFormId INT
+	LegalFormId INT,
+	IsDeleted BIT
 );
 insert into Company (Title, LegalFormId) values ('Quilix', 2);
 insert into Company (Title, LegalFormId) values ('<epam>', 2);
@@ -42,7 +47,8 @@ create table Employee (
 	Patronymic NVARCHAR(50),
 	EmploymentDate DATE,
 	PositionId INT,
-	CompanyId INT
+	CompanyId INT,
+	IsDeleted BIT
 );
 insert into Employee (Surname, Name, Patronymic, EmploymentDate, PositionId, CompanyId) values ('Barbe', 'Nancee', 'Stanfield', '2020-10-10 00:50:59', 2, 9);
 insert into Employee (Surname, Name, Patronymic, EmploymentDate, PositionId, CompanyId) values ('Slyde', 'Godfrey', 'Paola', '2021-05-21 23:31:51', 2, 6);

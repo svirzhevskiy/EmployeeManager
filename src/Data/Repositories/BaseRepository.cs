@@ -20,7 +20,8 @@ namespace Data.Repositories
 
         public Task<IEnumerable<T>> GetAll()
         {
-            return _context.ExecuteQuery<T>($"SELECT * FROM {_table} ORDER BY Id DESC");
+            return _context.ExecuteQuery<T>(
+                $"SELECT * FROM {_table} WHERE IsDeleted=0 OR IsDeleted IS NULL ORDER BY Id DESC");
         }
 
         public void Create(T entity)
@@ -103,7 +104,7 @@ namespace Data.Repositories
         
         public void Delete(int id)
         {
-            _context.AddCommand($"DELETE FROM {_table} WHERE Id={id}");
+            _context.AddCommand($"UPDATE {_table} SET IsDeleted=1 WHERE Id={id}");
         }
 
         public async Task<T> GetById(int id)

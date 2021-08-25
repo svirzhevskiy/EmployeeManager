@@ -89,7 +89,7 @@ namespace Data
 
             var props = entity.GetType().GetProperties();
 
-            for (var i = 0; i < data.Length; i++)
+            for (var i = 0; i < props.Length; i++)
             {
                 props[i].SetValue(entity, Convert.ChangeType(data[i], props[i].PropertyType));
             }
