@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Entities;
 using Data.Interfaces;
 using Logic.DTOs;
 using Logic.Interfaces;
@@ -11,28 +10,22 @@ namespace Logic.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IBaseRepository<Employee> _repository;
-        private readonly IBaseRepository<Position> _positionRepository;
-        private readonly IBaseRepository<Company> _companyRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EmployeeService(IBaseRepository<Employee> repository, 
-            IBaseRepository<Position> positionRepository, 
-            IBaseRepository<Company> companyRepository)
+        public EmployeeService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
-            _positionRepository = positionRepository;
-            _companyRepository = companyRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<EmployeeDTO>> GetAll()
         {
-            var entities =  _repository.GetAll();
-            var positions =  _positionRepository.GetAll();
-            var companies = _companyRepository.GetAll(); 
+            var employees =  _unitOfWork.Employees.GetAll();
+            var positions =  _unitOfWork.Positions.GetAll();
+            var companies = _unitOfWork.Companies.GetAll(); 
 
-            await Task.WhenAll(entities, positions, companies);
+            await Task.WhenAll(employees, positions, companies);
 
-            return entities.Result.Select(x => new EmployeeDTO
+            return employees.Result.Select(x => new EmployeeDTO
             {
                 Id = x.Id,
                 Surname = x.Surname,

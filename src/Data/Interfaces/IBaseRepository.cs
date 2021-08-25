@@ -6,9 +6,9 @@ namespace Data.Interfaces
     public interface IBaseRepository<T> where T : class, new()
     {
         Task<IEnumerable<T>> GetAll();
-        Task<bool> Create(T entity);
-        Task<bool> Update(T entity);
-        Task<bool> Delete(int id);
+        void Create(T entity);
+        void Update(T entity);
+        void Delete(int id);
         Task<T> GetById(int id);
     }
 }

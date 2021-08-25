@@ -9,21 +9,21 @@ namespace Data.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
-        private readonly IDatabaseProvider _database;
+        private readonly IDbContext _context;
         private readonly string _table;
 
-        public BaseRepository(IDatabaseProvider database)
+        public BaseRepository(IDbContext context)
         {
-            _database = database;
+            _context = context;
             _table = typeof(T).Name;
         }
 
         public Task<IEnumerable<T>> GetAll()
         {
-            return _database.ExecuteQuery<T>($"SELECT * FROM {_table} ORDER BY Id DESC");
+            return _context.ExecuteQuery<T>($"SELECT * FROM {_table} ORDER BY Id DESC");
         }
 
-        public Task<bool> Create(T entity)
+        public void Create(T entity)
         {
             var fieldsBuilder = new StringBuilder();
             var valuesBuilder = new StringBuilder();
@@ -53,10 +53,10 @@ namespace Data.Repositories
                 valuesBuilder.Append(", ");
             }
             
-            return _database.ExecuteCommand($"INSERT INTO {_table} ({fieldsBuilder}) VALUES ({valuesBuilder})");
+            _context.AddCommand($"INSERT INTO {_table} ({fieldsBuilder}) VALUES ({valuesBuilder})");
         }
 
-        public Task<bool> Update(T entity)
+        public void Update(T entity)
         {
             var updateCommand = new StringBuilder();
             var id = -1;
@@ -90,17 +90,17 @@ namespace Data.Repositories
                 updateCommand.Append(", ");
             }
 
-            return _database.ExecuteCommand($"UPDATE {_table} SET {updateCommand} where Id={id}");
+            _context.AddCommand($"UPDATE {_table} SET {updateCommand} where Id={id}");
         }
         
-        public Task<bool> Delete(int id)
+        public void Delete(int id)
         {
-            return _database.ExecuteCommand($"DELETE FROM {_table} WHERE Id={id}");
+            _context.AddCommand($"DELETE FROM {_table} WHERE Id={id}");
         }
 
         public async Task<T> GetById(int id)
         {
-            var entities = await _database.ExecuteQuery<T>($"SELECT * FROM {_table} WHERE Id={id}");
+            var entities = await _context.ExecuteQuery<T>($"SELECT * FROM {_table} WHERE Id={id}");
             
             return entities.Single();
         }

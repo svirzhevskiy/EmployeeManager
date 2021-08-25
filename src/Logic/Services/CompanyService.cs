@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Entities;
 using Data.Interfaces;
 using Logic.DTOs;
 using Logic.Interfaces;
@@ -10,24 +9,21 @@ namespace Logic.Services
 {
     public class CompanyService : ICompanyService
     {
-        private readonly IBaseRepository<Company> _repository;
-        private readonly IBaseRepository<LegalForm> _legalFormRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CompanyService(IBaseRepository<Company> repository, 
-            IBaseRepository<LegalForm> legalFormRepository)
+        public CompanyService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
-            _legalFormRepository = legalFormRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<CompanyDTO>> GetAll()
         {
-            var entities =  _repository.GetAll();
-            var legalForms =  _legalFormRepository.GetAll();
+            var companies =  _unitOfWork.Companies.GetAll();
+            var legalForms =  _unitOfWork.LegalForms.GetAll();
 
-            await Task.WhenAll(entities, legalForms);
+            await Task.WhenAll(companies, legalForms);
 
-            return entities.Result.Select(x => new CompanyDTO
+            return companies.Result.Select(x => new CompanyDTO
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -41,29 +37,35 @@ namespace Logic.Services
 
         public Task<bool> Create(CompanyDTO dto)
         {
-            return _repository.Create(CompanyDTO.ToEntity(dto));
+            _unitOfWork.Companies.Create(CompanyDTO.ToEntity(dto));
+            
+            return _unitOfWork.Commit();
         }
 
         public Task<bool> Update(CompanyDTO dto)
         {
-            return _repository.Update(CompanyDTO.ToEntity(dto));
+            _unitOfWork.Companies.Update(CompanyDTO.ToEntity(dto));
+            
+            return _unitOfWork.Commit();
         }
 
         public Task<bool> Delete(int id)
         {
-            return _repository.Delete(id);
+            _unitOfWork.Companies.Delete(id);
+            
+            return _unitOfWork.Commit();
         }
 
         public async Task<CompanyDTO> GetById(int id)
         {
-            var entity = await _repository.GetById(id);
+            var entity = await _unitOfWork.Companies.GetById(id);
 
             return CompanyDTO.ToDTO(entity);
         }
 
         public async Task<IEnumerable<EnumItemDTO>> GetLegalForms()
         {
-            var entities = await _legalFormRepository.GetAll();
+            var entities = await _unitOfWork.LegalForms.GetAll();
 
             return entities.Select(x => new EnumItemDTO { Id = x.Id, Title = x.Title });
         }

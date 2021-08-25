@@ -1,4 +1,4 @@
-﻿namespace Data.DatabaseProvider
+﻿namespace Data
 {
     public class DbSettings : IDbSettings
     {
