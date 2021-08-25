@@ -25,24 +25,11 @@ namespace Logic.Services
 
             await Task.WhenAll(employees, positions, companies);
 
-            return employees.Result.Select(x => new EmployeeDTO
-            {
-                Id = x.Id,
-                Surname = x.Surname,
-                Name = x.Name,
-                Patronymic = x.Patronymic,
-                EmploymentDate = x.EmploymentDate,
-                Company = new EnumItemDTO
-                {
-                    Id = x.CompanyId,
-                    Title = companies.Result.First(c => c.Id == x.CompanyId).Title
-                },
-                Position = new EnumItemDTO
-                {
-                    Id = x.PositionId,
-                    Title = positions.Result.First(p => p.Id == x.PositionId).Title
-                }
-            });
+            return employees.Result.Select(x => EmployeeDTO.ToDTO(
+                x,
+                positions.Result.First(p => p.Id == x.PositionId),
+                companies.Result.First(c => c.Id == x.CompanyId)
+            ));
         }
         
         public async Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage)
@@ -55,24 +42,11 @@ namespace Logic.Services
 
             await Task.WhenAll(employees, positions, companies);
 
-            return employees.Result.Select(x => new EmployeeDTO
-            {
-                Id = x.Id,
-                Surname = x.Surname,
-                Name = x.Name,
-                Patronymic = x.Patronymic,
-                EmploymentDate = x.EmploymentDate,
-                Company = new EnumItemDTO
-                {
-                    Id = x.CompanyId,
-                    Title = companies.Result.First(c => c.Id == x.CompanyId).Title
-                },
-                Position = new EnumItemDTO
-                {
-                    Id = x.PositionId,
-                    Title = positions.Result.First(p => p.Id == x.PositionId).Title
-                }
-            });
+            return employees.Result.Select(x => EmployeeDTO.ToDTO(
+                x,
+                positions.Result.First(p => p.Id == x.PositionId),
+                companies.Result.First(c => c.Id == x.CompanyId)
+                ));
         }
 
         public Task<int> CountEmployees()
