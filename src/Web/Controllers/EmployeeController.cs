@@ -98,7 +98,7 @@ namespace Web.Controllers
             
             ModelState.AddModelError("", "Произошла ошибка");
             
-            var employees = await _service.GetAll();
+            var employees = await _service.GetAll(1, ItemsPerPage, "");
             
             return View("Index", new IndexModel
             {

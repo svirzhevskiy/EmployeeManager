@@ -17,21 +17,6 @@ namespace Logic.Services
         {
             _unitOfWork = unitOfWork;
         }
-
-        public async Task<IEnumerable<EmployeeDTO>> GetAll()
-        {
-            var employees =  _unitOfWork.Employees.GetAll();
-            var positions =  _unitOfWork.Positions.GetAll();
-            var companies = _unitOfWork.Companies.GetAll(); 
-
-            await Task.WhenAll(employees, positions, companies);
-
-            return employees.Result.Select(x => EmployeeDTO.ToDTO(
-                x,
-                positions.Result.First(p => p.Id == x.PositionId),
-                companies.Result.First(c => c.Id == x.CompanyId)
-            ));
-        }
         
         public async Task<IEnumerable<EmployeeDTO>> GetAll(int page, int itemsPerPage, string filter)
         {

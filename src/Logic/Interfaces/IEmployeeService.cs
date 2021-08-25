@@ -7,11 +7,6 @@ namespace Logic.Interfaces
     public interface IEmployeeService
     {
         /// <summary>
-        /// Get all employees
-        /// </summary>
-        /// <returns>Collection of employees</returns>
-        Task<IEnumerable<EmployeeDTO>> GetAll();
-        /// <summary>
         /// Get employees for specified page
         /// </summary>
         /// <param name="page">Page number</param>
