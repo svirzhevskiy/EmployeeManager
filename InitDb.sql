@@ -5,7 +5,7 @@ GO
 use "EmployeeManagementDB";
 
 create table LegalForm (
-	Id INT IDENTITY(1, 1),
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
 	Title NVARCHAR(50),
 	IsDeleted BIT
 );
@@ -14,7 +14,7 @@ insert into LegalForm (Title) values (N'ОАО');
 insert into LegalForm (Title) values (N'ЗАО');
 
 create table Position (
-	Id INT IDENTITY(1, 1),
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
 	Title NVARCHAR(50),
 	IsDeleted BIT
 );
@@ -24,9 +24,9 @@ insert into Position (Title) values (N'Бизнес-аналитик');
 insert into Position (Title) values (N'Менеджер');
 
 create table Company (
-	Id INT IDENTITY(1, 1),
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
 	Title NVARCHAR(50),
-	LegalFormId INT,
+	LegalFormId INT FOREIGN KEY REFERENCES LegalForm,
 	IsDeleted BIT
 );
 insert into Company (Title, LegalFormId) values ('Quilix', 2);
@@ -41,13 +41,13 @@ insert into Company (Title, LegalFormId) values ('Amazon', 2);
 insert into Company (Title, LegalFormId) values ('Apple', 1);
 
 create table Employee (
-	Id INT IDENTITY(1, 1),
+	Id INT IDENTITY(1, 1) PRIMARY KEY,
 	Surname NVARCHAR(50),
 	Name NVARCHAR(50),
 	Patronymic NVARCHAR(50),
 	EmploymentDate DATE,
-	PositionId INT,
-	CompanyId INT,
+	PositionId INT FOREIGN KEY REFERENCES Position,
+	CompanyId INT FOREIGN KEY REFERENCES Company,
 	IsDeleted BIT
 );
 insert into Employee (Surname, Name, Patronymic, EmploymentDate, PositionId, CompanyId) values ('Barbe', 'Nancee', 'Stanfield', '2020-10-10 00:50:59', 2, 9);
