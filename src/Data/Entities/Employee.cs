@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Data.Entities
+namespace Data.Entities;
+
+public class Employee
 {
-    public class Employee
-    {
-        public int Id { get; set; }
-        public string Surname { get; set; } = "";
-        public string Name { get; set; } = "";
-        public string Patronymic { get; set; } = "";
-        public DateTime EmploymentDate { get; set; }
-        public int PositionId { get; set; }
-        public int CompanyId { get; set; }
-    }
+    public int Id { get; set; }
+    public string Surname { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Patronymic { get; set; } = string.Empty;
+    public DateTime EmploymentDate { get; set; }
+    public int PositionId { get; set; }
+    public int CompanyId { get; set; }
 }

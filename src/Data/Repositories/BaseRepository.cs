@@ -5,129 +5,125 @@ using System.Text;
 using System.Threading.Tasks;
 using Data.Interfaces;
 
-namespace Data.Repositories
+namespace Data.Repositories;
+
+public class BaseRepository<TEntity>(IDbContext context) : IBaseRepository<TEntity>
+    where TEntity : class, new()
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
+    private readonly string _table = typeof(TEntity).Name;
+
+    public Task<IEnumerable<TEntity>> GetAll() =>
+        context.ExecuteQuery<TEntity>(
+            $"SELECT * FROM {_table} WHERE IsDeleted=0 OR IsDeleted IS NULL ORDER BY Id DESC");
+
+    public void Create(TEntity entity)
     {
-        private readonly IDbContext _context;
-        private readonly string _table;
+        var fieldsBuilder = new StringBuilder();
+        var valuesBuilder = new StringBuilder();
 
-        public BaseRepository(IDbContext context)
+        var props = typeof(TEntity).GetProperties();
+
+        for (var propIndex = 0; propIndex < props.Length; propIndex++)
         {
-            _context = context;
-            _table = typeof(T).Name;
-        }
-
-        public Task<IEnumerable<T>> GetAll()
-        {
-            return _context.ExecuteQuery<T>(
-                $"SELECT * FROM {_table} WHERE IsDeleted=0 OR IsDeleted IS NULL ORDER BY Id DESC");
-        }
-
-        public void Create(T entity)
-        {
-            var fieldsBuilder = new StringBuilder();
-            var valuesBuilder = new StringBuilder();
-
-            var props = typeof(T).GetProperties();
-
-            for (var i = 0; i < props.Length; i++)
+            if (props[propIndex].Name == "Id")
             {
-                if (props[i].Name == "Id") continue;
+                continue;
+            }
                 
-                fieldsBuilder.Append(props[i].Name);
+            fieldsBuilder.Append(props[propIndex].Name);
 
-                if (props[i].PropertyType != typeof(int))
+            if (props[propIndex].PropertyType != typeof(int))
+            {
+                if (props[propIndex].PropertyType == typeof(string))
                 {
-                    if (props[i].PropertyType == typeof(string))
-                    {
-                        valuesBuilder.Append('N');
-                    }
-                    valuesBuilder.Append("'");
-                    if (props[i].PropertyType == typeof(DateTime))
-                    {
-                        var date = Convert.ToDateTime(props[i].GetValue(entity)).ToString("yyyy-MM-dd");
-                        valuesBuilder.Append(date);
-                    }
-                    else
-                    {
-                        valuesBuilder.Append(props[i].GetValue(entity));
-                    }
-                    valuesBuilder.Append("'");
+                    valuesBuilder.Append('N');
+                }
+                valuesBuilder.Append("'");
+                
+                if (props[propIndex].PropertyType == typeof(DateTime))
+                {
+                    var date = Convert.ToDateTime(props[propIndex].GetValue(entity)).ToString("yyyy-MM-dd");
+                    valuesBuilder.Append(date);
                 }
                 else
                 {
-                    valuesBuilder.Append(props[i].GetValue(entity));
+                    valuesBuilder.Append(props[propIndex].GetValue(entity));
                 }
-                
-                if (i == props.Length - 1) break;
-                
-                fieldsBuilder.Append(", ");
-                valuesBuilder.Append(", ");
+                valuesBuilder.Append("'");
             }
+            else
+            {
+                valuesBuilder.Append(props[propIndex].GetValue(entity));
+            }
+
+            if (propIndex == props.Length - 1)
+            {
+                break;
+            }
+                
+            fieldsBuilder.Append(", ");
+            valuesBuilder.Append(", ");
+        }
             
-            _context.AddCommand($"INSERT INTO {_table} ({fieldsBuilder}) VALUES ({valuesBuilder})");
-        }
+        context.AddCommand($"INSERT INTO {_table} ({fieldsBuilder}) VALUES ({valuesBuilder})");
+    }
 
-        public void Update(T entity)
+    public void Update(TEntity entity)
+    {
+        var updateCommand = new StringBuilder();
+        var id = -1;
+
+        var props = typeof(TEntity).GetProperties();
+
+        for (var propIndex = 0; propIndex < props.Length; propIndex++)
         {
-            var updateCommand = new StringBuilder();
-            var id = -1;
-
-            var props = typeof(T).GetProperties();
-
-            for (var i = 0; i < props.Length; i++)
+            if (props[propIndex].Name == "Id")
             {
-                if (props[i].Name == "Id")
-                {
-                    id = Convert.ToInt32(props[i].GetValue(entity));
-                    continue;
-                }
+                id = Convert.ToInt32(props[propIndex].GetValue(entity));
+                continue;
+            }
                 
-                updateCommand.Append(props[i].Name);
-                updateCommand.Append("=");
+            updateCommand.Append(props[propIndex].Name);
+            updateCommand.Append("=");
 
-                if (props[i].PropertyType != typeof(int))
+            if (props[propIndex].PropertyType != typeof(int))
+            {
+                if (props[propIndex].PropertyType == typeof(string))
                 {
-                    if (props[i].PropertyType == typeof(string))
-                    {
-                        updateCommand.Append('N');
-                    }
-                    updateCommand.Append("'");
-                    if (props[i].PropertyType == typeof(DateTime))
-                    {
-                        var date = Convert.ToDateTime(props[i].GetValue(entity)).ToString("yyyy-MM-dd");
-                        updateCommand.Append(date);
-                    }
-                    else
-                    {
-                        updateCommand.Append(props[i].GetValue(entity));
-                    }
-                    updateCommand.Append("'");
+                    updateCommand.Append('N');
+                }
+                updateCommand.Append("'");
+                
+                if (props[propIndex].PropertyType == typeof(DateTime))
+                {
+                    var date = Convert.ToDateTime(props[propIndex].GetValue(entity)).ToString("yyyy-MM-dd");
+                    updateCommand.Append(date);
                 }
                 else
                 {
-                    updateCommand.Append(props[i].GetValue(entity));
+                    updateCommand.Append(props[propIndex].GetValue(entity));
                 }
-                
-                if (i == props.Length - 1) break;
-                
-                updateCommand.Append(", ");
+                updateCommand.Append("'");
             }
-
-            _context.AddCommand($"UPDATE {_table} SET {updateCommand} where Id={id}");
+            else
+            {
+                updateCommand.Append(props[propIndex].GetValue(entity));
+            }
+                
+            if (propIndex == props.Length - 1) break;
+                
+            updateCommand.Append(", ");
         }
+
+        context.AddCommand($"UPDATE {_table} SET {updateCommand} where Id={id}");
+    }
         
-        public void Delete(int id)
-        {
-            _context.AddCommand($"UPDATE {_table} SET IsDeleted=1 WHERE Id={id}");
-        }
+    public void Delete(int id) => context.AddCommand($"UPDATE {_table} SET IsDeleted=1 WHERE Id={id}");
 
-        public async Task<T> GetById(int id)
-        {
-            var entities = await _context.ExecuteQuery<T>($"SELECT * FROM {_table} WHERE Id={id}");
+    public async Task<TEntity> GetById(int id)
+    {
+        var entities = await context.ExecuteQuery<TEntity>($"SELECT * FROM {_table} WHERE Id={id}");
             
-            return entities.Single();
-        }
+        return entities.Single();
     }
 }

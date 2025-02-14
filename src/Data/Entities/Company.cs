@@ -1,9 +1,8 @@
-﻿namespace Data.Entities
+﻿namespace Data.Entities;
+
+public class Company
 {
-    public class Company
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = "";
-        public int LegalFormId { get; set; }
-    }
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public int LegalFormId { get; set; }
 }

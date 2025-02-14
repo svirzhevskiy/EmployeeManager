@@ -4,126 +4,122 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Data.Interfaces;
 
-namespace Data
+namespace Data;
+
+public class DbContext : IDbContext
 {
-    public class DbContext : IDbContext
+    private readonly List<string> _commands;
+    private readonly string _connectionString;
+
+    public DbContext(IDbSettings settings)
     {
-        private readonly List<string> _commands;
-        private readonly string _connectionString;
+        _connectionString = settings.ConnectionString;
+        _commands = new List<string>();
+    }
 
-        public DbContext(IDbSettings settings)
-        {
-            _connectionString = settings.ConnectionString;
-            _commands = new List<string>();
-        }
+    public DbContext(List<string> commands, string connectionString)
+    {
+        _commands = commands;
+        _connectionString = connectionString;
+    }
 
-        public DbContext(List<string> commands, string connectionString)
-        {
-            _commands = commands;
-            _connectionString = connectionString;
-        }
+    public void AddCommand(string sqlCommand) => _commands.Add(sqlCommand);
 
-        public void AddCommand(string sqlCommand)
+    public async Task<bool> SaveChanges()
+    {
+        await using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        var transaction = connection.BeginTransaction();
+
+        try
         {
-            _commands.Add(sqlCommand);
+            var commandTasks = new List<Task>();
+
+            foreach (var cmdText in _commands)
+            {
+                await using var sqlCommand = new SqlCommand(cmdText, connection, transaction);
+                commandTasks.Add(sqlCommand.ExecuteNonQueryAsync());
+            }
+
+            await Task.WhenAll(commandTasks);
+
+            await transaction.CommitAsync();
+
+            return true;
         }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+    }
         
-        public async Task<bool> SaveChanges()
+    public async Task<IEnumerable<TEntity>> ExecuteQuery<TEntity>(string query) where TEntity : class, new()
+    {
+        await using var connection = new SqlConnection(_connectionString);
+        try
         {
-            await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            var transaction = connection.BeginTransaction();
-
-            try
-            {
-                var commandTasks = new List<Task>();
-
-                foreach (var cmdText in _commands)
-                {
-                    await using var sqlCommand = new SqlCommand(cmdText, connection, transaction);
-                    commandTasks.Add(sqlCommand.ExecuteNonQueryAsync());
-                }
-
-                await Task.WhenAll(commandTasks);
-
-                await transaction.CommitAsync();
-
-                return true;
-            }
-            catch (Exception)
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-        }
-        
-        public async Task<IEnumerable<T>> ExecuteQuery<T>(string query) where T : class, new()
-        {
-            await using var connection = new SqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
                     
-                await using var sqlCommand = new SqlCommand(query, connection);
-                await using var reader = await sqlCommand.ExecuteReaderAsync();
+            await using var sqlCommand = new SqlCommand(query, connection);
+            await using var reader = await sqlCommand.ExecuteReaderAsync();
 
-                var result = new List<T>();
+            var result = new List<TEntity>();
                     
-                while (await reader.ReadAsync())
-                {
-                    object[] values = new object[reader.FieldCount];
-                    reader.GetValues(values);
-
-                    result.Add(CreateEntity<T>(values));
-                }
-
-                return result;
-            }
-            finally
+            while (await reader.ReadAsync())
             {
-                await connection.CloseAsync();
-            }
-        }
-
-        public async Task<object[]> ExecuteQuery(string query)
-        {
-            await using var connection = new SqlConnection(_connectionString);
-            try
-            {
-                await connection.OpenAsync();
-                    
-                await using var sqlCommand = new SqlCommand(query, connection);
-                await using var reader = await sqlCommand.ExecuteReaderAsync();
-
-                await reader.ReadAsync();
-
-                object[] values = new object[reader.FieldCount];
+                var values = new object[reader.FieldCount];
                 reader.GetValues(values);
-                
-                return values;
+
+                result.Add(CreateEntity<TEntity>(values));
             }
-            finally
-            {
-                await connection.CloseAsync();
-            }
+
+            return result;
         }
-        
-        private static T CreateEntity<T>(object[] data) where T : class, new()
+        finally
         {
-            var entity = new T();
-
-            var props = entity.GetType().GetProperties();
-
-            for (var i = 0; i < props.Length; i++)
-            {
-                props[i].SetValue(entity, Convert.ChangeType(data[i], props[i].PropertyType));
-            }
-            
-            return entity;
+            await connection.CloseAsync();
         }
+    }
+
+    public async Task<object[]> ExecuteQuery(string query)
+    {
+        await using var connection = new SqlConnection(_connectionString);
+        try
+        {
+            await connection.OpenAsync();
+                    
+            await using var sqlCommand = new SqlCommand(query, connection);
+            await using var reader = await sqlCommand.ExecuteReaderAsync();
+
+            await reader.ReadAsync();
+
+            var values = new object[reader.FieldCount];
+            reader.GetValues(values);
+                
+            return values;
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+    }
+        
+    private static TEntity CreateEntity<TEntity>(object[] data) where TEntity : class, new()
+    {
+        var entity = new TEntity();
+
+        var props = entity.GetType().GetProperties();
+
+        for (var propIndex = 0; propIndex < props.Length; propIndex++)
+        {
+            props[propIndex].SetValue(entity, Convert.ChangeType(data[propIndex], props[propIndex].PropertyType));
+        }
+            
+        return entity;
     }
 }
