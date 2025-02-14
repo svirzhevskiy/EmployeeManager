@@ -1,8 +1,7 @@
-﻿namespace Logic.DTOs
+﻿namespace Logic.DTOs;
+
+public class EnumItemDTO
 {
-    public class EnumItemDTO
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = "";
-    }
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
 }
