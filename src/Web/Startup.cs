@@ -10,59 +10,52 @@ using Logic.Interfaces;
 using Logic.Services;
 using Microsoft.Extensions.Options;
 
-namespace Web
+namespace Web;
+
+public class Startup(IConfiguration configuration)
 {
-    public class Startup
+    private IConfiguration Configuration { get; } = configuration;
+
+    public void ConfigureServices(IServiceCollection services)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services
-                .Configure<DbSettings>(Configuration.GetSection(nameof(DbSettings)))
-                .AddSingleton<IDbSettings>(sp =>
-                    sp.GetRequiredService<IOptions<DbSettings>>().Value);
+        services
+            .Configure<DbSettings>(Configuration.GetSection(nameof(DbSettings)))
+            .AddSingleton<IDbSettings>(serviceProvider => serviceProvider.GetRequiredService<IOptions<DbSettings>>().Value);
             
-            services.AddScoped<IDbContext, DbContext>();
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IDbContext, DbContext>();
+        services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<IEmployeeService, EmployeeService>();
-            services.AddScoped<ICompanyService, CompanyService>();
+        services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<ICompanyService, CompanyService>();
             
-            services.AddControllersWithViews();
-        }
+        services.AddControllersWithViews();
+    }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Employee/Error");
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Employee}/{action=Index}/{id?}");
-            });
+            app.UseDeveloperExceptionPage();
         }
+        else
+        {
+            app.UseExceptionHandler("/Employee/Error");
+            app.UseHsts();
+        }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Employee}/{action=Index}/{id?}");
+        });
     }
 }
